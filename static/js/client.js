@@ -37898,10 +37898,9 @@ var HornetApp = /** @class */ (function (_super) {
             React.createElement("li", null,
                 React.createElement("a", { title: messIntl.help + applicationTitle, href: this.genUrl("/aide") }, messIntl.help))
             : null;
-        var user = React.createElement(user_1.User, null);
         var lang = React.createElement(change_language_1.ChangeLanguage, { handleChangeLanguage: this.handleChangeLanguage, position: dropdown_1.Position.BOTTOMRIGHT });
-        var userMock = hornet_js_utils_1.Utils.config.getOrDefault("fullSpa.enabled", false) && hornet_js_utils_1.Utils.config.getOrDefault("mock.enabled", false) ? React.createElement(dropdown_1.Dropdown, { items: [{ label: "as Admin", action: this.changeUserTo, valueCurrent: "admin", className: "link" },
-                { label: "As User", action: this.changeUserTo, valueCurrent: "user", className: "link" }], title: "mock users", icon: "picto-user", className: "profil-content", id: "dropdown-user-mock" + "-drop", label: "Users", labelClassName: "profil-label", position: dropdown_1.Position.BOTTOMRIGHT }) : null;
+        var user = hornet_js_utils_1.Utils.config.getOrDefault("fullSpa.enabled", false) && hornet_js_utils_1.Utils.config.getOrDefault("mock.enabled", false) ? React.createElement(dropdown_1.Dropdown, { items: [{ label: "as Admin", action: this.changeUserTo, valueCurrent: "admin", className: "link" },
+                { label: "As User", action: this.changeUserTo, valueCurrent: "user", className: "link" }], title: "mock users", icon: "picto-user", className: "profil-content", id: "dropdown-user-mock" + "-drop", label: "Users", labelClassName: "profil-label", position: dropdown_1.Position.BOTTOMRIGHT }) : React.createElement(user_1.User, null);
         // todo add to banner
         var wrappedUserLang = (React.createElement("div", { className: "userlang fr full-height" },
             user,
@@ -37914,7 +37913,6 @@ var HornetApp = /** @class */ (function (_super) {
                         React.createElement("div", { className: "fl full-height" },
                             React.createElement("a", { className: "header-link", title: this.i18n("application.headerTitleText"), href: this.state.headerTitleUrl }, this.i18n("application.headerTitle"))),
                         React.createElement("div", { className: "fr full-height user", style: { display: "inline-flex" } },
-                            userMock,
                             user,
                             lang,
                             React.createElement(layout_switcher_1.LayoutSwitcher, null)))),
