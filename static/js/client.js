@@ -244,7 +244,7 @@ if (typeof window !== "undefined" && window["Mode"]) {
 //permet de changer la serialisation json des types dates
 //cette surcharge est destinée à disparaitre lorsque les hornet-js-bean-converteurs seront créés
 Date.prototype.toJSON = function () { return this.getTime(); };
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var date_utils_1 = __webpack_require__(110);
 var config_lib_1 = __webpack_require__(155);
 var app_shared_props_1 = __webpack_require__(154);
@@ -24016,7 +24016,7 @@ var hornet_component_1 = __webpack_require__(4);
 var hornet_event_1 = __webpack_require__(7);
 var layout_switcher_1 = __webpack_require__(25);
 var router_client_async_elements_1 = __webpack_require__(21);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var hornet_event_2 = __webpack_require__(7);
 var expanding_layout_request_1 = __webpack_require__(131);
 var layout_switcher_2 = __webpack_require__(25);
@@ -24662,6 +24662,331 @@ module.exports = invariant;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
+
+/**
+ * Copyright ou © ou Copr. Ministère de l'Europe et des Affaires étrangères (2017)
+ * <p/>
+ * pole-architecture.dga-dsi-psi@diplomatie.gouv.fr
+ * <p/>
+ * Ce logiciel est un programme informatique servant à faciliter la création
+ * d'applications Web conformément aux référentiels généraux français : RGI, RGS et RGAA
+ * <p/>
+ * Ce logiciel est régi par la licence CeCILL soumise au droit français et
+ * respectant les principes de diffusion des logiciels libres. Vous pouvez
+ * utiliser, modifier et/ou redistribuer ce programme sous les conditions
+ * de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
+ * sur le site "http://www.cecill.info".
+ * <p/>
+ * En contrepartie de l'accessibilité au code source et des droits de copie,
+ * de modification et de redistribution accordés par cette licence, il n'est
+ * offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
+ * seule une responsabilité restreinte pèse sur l'auteur du programme,  le
+ * titulaire des droits patrimoniaux et les concédants successifs.
+ * <p/>
+ * A cet égard  l'attention de l'utilisateur est attirée sur les risques
+ * associés au chargement,  à l'utilisation,  à la modification et/ou au
+ * développement et à la reproduction du logiciel par l'utilisateur étant
+ * donné sa spécificité de logiciel libre, qui peut le rendre complexe à
+ * manipuler et qui le réserve donc à des développeurs et des professionnels
+ * avertis possédant  des  connaissances  informatiques approfondies.  Les
+ * utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
+ * logiciel à leurs besoins dans des conditions permettant d'assurer la
+ * sécurité de leurs systèmes et ou de leurs données et, plus généralement,
+ * à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
+ * <p/>
+ * Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
+ * pris connaissance de la licence CeCILL, et que vous en avez accepté les
+ * termes.
+ * <p/>
+ * <p/>
+ * Copyright or © or Copr. Ministry for Europe and Foreign Affairs (2017)
+ * <p/>
+ * pole-architecture.dga-dsi-psi@diplomatie.gouv.fr
+ * <p/>
+ * This software is a computer program whose purpose is to facilitate creation of
+ * web application in accordance with french general repositories : RGI, RGS and RGAA.
+ * <p/>
+ * This software is governed by the CeCILL license under French law and
+ * abiding by the rules of distribution of free software.  You can  use,
+ * modify and/ or redistribute the software under the terms of the CeCILL
+ * license as circulated by CEA, CNRS and INRIA at the following URL
+ * "http://www.cecill.info".
+ * <p/>
+ * As a counterpart to the access to the source code and  rights to copy,
+ * modify and redistribute granted by the license, users are provided only
+ * with a limited warranty  and the software's author,  the holder of the
+ * economic rights,  and the successive licensors  have only  limited
+ * liability.
+ * <p/>
+ * In this respect, the user's attention is drawn to the risks associated
+ * with loading,  using,  modifying and/or developing or reproducing the
+ * software by the user in light of its specific status of free software,
+ * that may mean  that it is complicated to manipulate,  and  that  also
+ * therefore means  that it is reserved for developers  and  experienced
+ * professionals having in-depth computer knowledge. Users are therefore
+ * encouraged to load and test the software's suitability as regards their
+ * requirements in conditions enabling the security of their systems and/or
+ * data to be ensured and,  more generally, to use and operate it in the
+ * same conditions as regards security.
+ * <p/>
+ * The fact that you are presently reading this means that you have had
+ * knowledge of the CeCILL license and that you accept its terms.
+ *
+ */
+Object.defineProperty(exports, "__esModule", { value: true });
+/**
+ * hornet-js-components - Interfaces des composants web de hornet-js
+ *
+ * @author MEAE - Ministère de l'Europe et des Affaires étrangères
+ * @version v5.1.0
+ * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
+ * @license CECILL-2.1
+ */
+var hornet_js_utils_1 = __webpack_require__(0);
+var MenuConstants = __webpack_require__(42);
+var authentication_utils_1 = __webpack_require__(58);
+var _ = __webpack_require__(6);
+var logger = hornet_js_utils_1.Utils.getLogger("hornet-js-component.navigation.utils.navigation-utils");
+/**
+ * Apporte des méthodes utilitaires pour gérer les aspects navigation (titre de pages, etc..)
+ */
+var NavigationUtils = /** @class */ (function () {
+    function NavigationUtils() {
+    }
+    /**
+     * Retourne toute la configuration Menu
+     * @returns {any}
+     */
+    NavigationUtils.getConfigMenu = function () {
+        return _.cloneDeep(hornet_js_utils_1.Utils.getCls("hornet.menuConfig") || []);
+    };
+    /**
+     *  Construit le tableau de menu en supprimant les liens auquel l'utilisateur n'a pas accès et en ajoutant les
+     * attributs id et level sur chaque item
+     * @param items
+     * @param user
+     * @param isForPlan
+     * @param itemParent
+     * @param level
+     * @returns {IMenuItem[]}
+     */
+    NavigationUtils.getFilteredConfigNavigation = function (items, user, isForPlan, itemParent, level) {
+        var currentItems = [];
+        var idParent = MenuConstants.MENU_ROOT.substring(0, MenuConstants.MENU_ROOT.length - 1);
+        if (itemParent) {
+            idParent = itemParent.id;
+        }
+        if (!level) {
+            level = 0;
+        }
+        for (var i = 0; i < items.length; i++) {
+            var item = items[i];
+            if (!item.rolesAutorises || (item.rolesAutorises && authentication_utils_1.AuthUtils.isAllowed(user, _.isArray(item.rolesAutorises) ? item.rolesAutorises : [item.rolesAutorises]))) {
+                var typeNavigation = (isForPlan) ? "visibleDansPlan" : "visibleDansMenu";
+                if (item[typeNavigation]) {
+                    logger.trace("L'utilisateur a accès au menu:", item.text);
+                    //item.index = indexParent + currentItems.length;
+                    item.id = idParent + MenuConstants.LVL_SEPARATOR + currentItems.length;
+                    item.level = level;
+                    if (item.submenu) {
+                        item.submenu = NavigationUtils.getFilteredConfigNavigation(item.submenu, user, isForPlan, item, level + 1);
+                    }
+                    currentItems.push(item);
+                }
+                else {
+                    logger.trace("L'élément ", item.text, " n'est pas visible dans les menus.");
+                }
+            }
+            else {
+                logger.trace("L'utilisateur n'a pas accès au menu:", item.text);
+            }
+        }
+        return currentItems;
+    };
+    /**
+     * Retourne la clé de la configuration du menu associée à l'url courante
+     * @param navigationData
+     * @param currentUrl
+     * @return {NavigationItem|string}
+     */
+    NavigationUtils.retrievePageTextKey = function (navigationData, currentUrl) {
+        var retour = NavigationUtils.retrievePageTextItem(navigationData, currentUrl);
+        return retour && retour.text;
+    };
+    NavigationUtils.getCurrentItem = function (navigationData, currentUrl) {
+        return this.retrievePageTextItem(navigationData, currentUrl);
+    };
+    /**
+     * Retrouve l'item de la configuration du menu associé à l'url courante
+     * @param navigationData
+     * @param currentUrl
+     * @return {NavigationItem}
+     */
+    NavigationUtils.retrievePageTextItem = function (navigationData, currentUrl) {
+        var currentNavigationItem = undefined;
+        logger.trace("current début:", currentUrl);
+        if (navigationData && navigationData.length > 0) {
+            for (var i = 0; i < navigationData.length; i++) {
+                var navigationItem = navigationData[i];
+                logger.trace(navigationItem);
+                /* test pour voir si l'Url ne se finit pas par un nombre si c'est le cas on supprimer pour avoir le fil d'arianne *
+                 - exemple /partenaire/editer/56  devient --> partenaire/editer
+                 */
+                if (navigationItem.url && currentUrl.match(RegExp(navigationItem.url, "gi"))) {
+                    //On a un bon candidat
+                    logger.trace("Bon candidat");
+                    currentNavigationItem = NavigationUtils.getItemWithLongerUrl(currentNavigationItem, navigationItem);
+                }
+                // Un item peut ne pas avoir d'url mais ses fils oui, il faut donc aller regarder
+                if (navigationItem.submenu) {
+                    logger.trace("parcours des sous menus");
+                    var tempNavigationData = NavigationUtils.retrievePageTextItem(navigationItem.submenu, currentUrl);
+                    currentNavigationItem = NavigationUtils.getItemWithLongerUrl(currentNavigationItem, tempNavigationData);
+                }
+            }
+            logger.trace("current fin :", currentNavigationItem);
+        }
+        return currentNavigationItem;
+    };
+    /**
+     * Retourne l'item ayant l'url la plus longue
+     * @param left
+     * @param right
+     * @return {NavigationItem}
+     */
+    NavigationUtils.getItemWithLongerUrl = function (left, right) {
+        if (!left) {
+            return right;
+        }
+        if (!right) {
+            return left;
+        }
+        if ((left.url || "").length > (right.url || "").length) {
+            return left;
+        }
+        else {
+            return right;
+        }
+    };
+    /**
+     * Change le titre de la page côté client
+     * @param titlePage
+     */
+    NavigationUtils.applyTitlePageOnClient = function (titlePage) {
+        if (!hornet_js_utils_1.Utils.isServer && titlePage) {
+            //côté client
+            document.title = titlePage;
+        }
+    };
+    /**
+     * Permet d'afficher un élément en lui ajoutant la classe MASKED_CLASSNAME (par défaut "masked")
+     * @param element
+     */
+    NavigationUtils.hideElement = function (element) {
+        if (!element.classList.contains(MenuConstants.MASKED_CLASSNAME)) {
+            element.classList.add(MenuConstants.MASKED_CLASSNAME);
+        }
+    };
+    /**
+     * teste si un element est visible dans la navigation
+     * @param element
+     * @returns {boolean}
+     */
+    NavigationUtils.isVisible = function (element) {
+        return !(element.classList.contains(MenuConstants.MASKED_CLASSNAME));
+    };
+    /**
+     * Permet de masquer un élément en lui ôtant la classe MASKED_CLASSNAME (par défaut "masked")
+     * @param element
+     */
+    NavigationUtils.showElement = function (element) {
+        element.classList.remove(MenuConstants.MASKED_CLASSNAME);
+    };
+    /**
+     * Teste si un sous-menu existe
+     * @param element
+     * @returns {boolean}
+     */
+    NavigationUtils.haveSubMenu = function (element) {
+        return element.classList.contains(MenuConstants.HAVING_SUBMENU_CLASSNAME);
+    };
+    /**
+     * Parcourt tout l'arbre d'un lien depuis son parent de plus haut niveau et affiche/masque ses parents
+     * @param element
+     * @param hideElement
+     * @param hideOthersNodesElements
+     */
+    NavigationUtils.rideDownElementAndToggle = function (element, hideElement, hideOthersNodesElements) {
+        var depth = element.id.replace(/[^0-9]/g, "").length;
+        var familyElementId = parseInt(element.id.replace(MenuConstants.MENU_ROOT, "").substr(0, 1));
+        var selector = MenuConstants.MENU_ROOT + familyElementId;
+        /* Fermeture de tous les éléments autres que la branche sur laquelle on est positionné */
+        if (hideOthersNodesElements) {
+            var configMenu = NavigationUtils.getConfigMenu(), user = hornet_js_utils_1.Utils.getCls("hornet.user"), items = NavigationUtils.getFilteredConfigNavigation(configMenu, user), nbMax = items.length + 1; // ajoute 1 pour infosComplémentaires
+            for (var i = 0; i < nbMax; i++) {
+                if (i != familyElementId) {
+                    var elementToHide = document.getElementById(MenuConstants.MENU_ROOT + i);
+                    if (elementToHide) {
+                        NavigationUtils.rideDownElementAndToggle(elementToHide, true);
+                    }
+                }
+            }
+        }
+        var myElement = document.getElementById(selector);
+        if (myElement) {
+            for (var i = 0; i < depth; i++) {
+                if (myElement.classList && myElement.classList.contains(MenuConstants.HAVING_SUBMENU_CLASSNAME)) {
+                    if (myElement.nextSibling && myElement.nextSibling.localName == "li") {
+                        if (hideElement) {
+                            // TODO à corriger : il faut aussi cacher les sous éléments (cf. mantis 58700)
+                            NavigationUtils.hideElement(myElement.nextSibling);
+                        }
+                        else {
+                            NavigationUtils.showElement(myElement.nextSibling);
+                        }
+                    }
+                    myElement = document.getElementById(selector + MenuConstants.LVL_SEPARATOR + "0");
+                }
+            }
+        }
+    };
+    /**
+     * @param item
+     * @returns {boolean} true lorsqu'au moins un sous-menu est visible
+     */
+    NavigationUtils.hasVisibleSubMenu = function (item) {
+        var isVisible = false;
+        if (item.submenu) {
+            isVisible = false;
+            for (var i = 0; i < item.submenu.length && !isVisible; i++) {
+                isVisible = item.submenu[i].visibleDansMenu;
+            }
+        }
+        return isVisible;
+    };
+    /**
+     * Positionne le focus sur un élément selon son ID
+     * @param id identifiant HTML de l'élément
+     */
+    NavigationUtils.setFocus = function (id) {
+        var element = document.getElementById(id);
+        if (element && element.focus) {
+            element.focus();
+            /* On affiche tous les éléments parents de l'élément sélectionné en partant du root */
+            NavigationUtils.rideDownElementAndToggle(element, false, true);
+        }
+    };
+    return NavigationUtils;
+}());
+exports.NavigationUtils = NavigationUtils;
+
+
+
+/***/ }),
+/* 19 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
 /* WEBPACK VAR INJECTION */(function(global) {
 /**
  * Copyright ou © ou Copr. Ministère de l'Europe et des Affaires étrangères (2017)
@@ -24781,7 +25106,7 @@ Register.getLogger = Register.registerGlobal("hornetLogger.getLogger", logger_1.
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
 
 /***/ }),
-/* 19 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -26578,331 +26903,6 @@ function isnan (val) {
 /* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(8)))
 
 /***/ }),
-/* 20 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-/**
- * Copyright ou © ou Copr. Ministère de l'Europe et des Affaires étrangères (2017)
- * <p/>
- * pole-architecture.dga-dsi-psi@diplomatie.gouv.fr
- * <p/>
- * Ce logiciel est un programme informatique servant à faciliter la création
- * d'applications Web conformément aux référentiels généraux français : RGI, RGS et RGAA
- * <p/>
- * Ce logiciel est régi par la licence CeCILL soumise au droit français et
- * respectant les principes de diffusion des logiciels libres. Vous pouvez
- * utiliser, modifier et/ou redistribuer ce programme sous les conditions
- * de la licence CeCILL telle que diffusée par le CEA, le CNRS et l'INRIA
- * sur le site "http://www.cecill.info".
- * <p/>
- * En contrepartie de l'accessibilité au code source et des droits de copie,
- * de modification et de redistribution accordés par cette licence, il n'est
- * offert aux utilisateurs qu'une garantie limitée.  Pour les mêmes raisons,
- * seule une responsabilité restreinte pèse sur l'auteur du programme,  le
- * titulaire des droits patrimoniaux et les concédants successifs.
- * <p/>
- * A cet égard  l'attention de l'utilisateur est attirée sur les risques
- * associés au chargement,  à l'utilisation,  à la modification et/ou au
- * développement et à la reproduction du logiciel par l'utilisateur étant
- * donné sa spécificité de logiciel libre, qui peut le rendre complexe à
- * manipuler et qui le réserve donc à des développeurs et des professionnels
- * avertis possédant  des  connaissances  informatiques approfondies.  Les
- * utilisateurs sont donc invités à charger  et  tester  l'adéquation  du
- * logiciel à leurs besoins dans des conditions permettant d'assurer la
- * sécurité de leurs systèmes et ou de leurs données et, plus généralement,
- * à l'utiliser et l'exploiter dans les mêmes conditions de sécurité.
- * <p/>
- * Le fait que vous puissiez accéder à cet en-tête signifie que vous avez
- * pris connaissance de la licence CeCILL, et que vous en avez accepté les
- * termes.
- * <p/>
- * <p/>
- * Copyright or © or Copr. Ministry for Europe and Foreign Affairs (2017)
- * <p/>
- * pole-architecture.dga-dsi-psi@diplomatie.gouv.fr
- * <p/>
- * This software is a computer program whose purpose is to facilitate creation of
- * web application in accordance with french general repositories : RGI, RGS and RGAA.
- * <p/>
- * This software is governed by the CeCILL license under French law and
- * abiding by the rules of distribution of free software.  You can  use,
- * modify and/ or redistribute the software under the terms of the CeCILL
- * license as circulated by CEA, CNRS and INRIA at the following URL
- * "http://www.cecill.info".
- * <p/>
- * As a counterpart to the access to the source code and  rights to copy,
- * modify and redistribute granted by the license, users are provided only
- * with a limited warranty  and the software's author,  the holder of the
- * economic rights,  and the successive licensors  have only  limited
- * liability.
- * <p/>
- * In this respect, the user's attention is drawn to the risks associated
- * with loading,  using,  modifying and/or developing or reproducing the
- * software by the user in light of its specific status of free software,
- * that may mean  that it is complicated to manipulate,  and  that  also
- * therefore means  that it is reserved for developers  and  experienced
- * professionals having in-depth computer knowledge. Users are therefore
- * encouraged to load and test the software's suitability as regards their
- * requirements in conditions enabling the security of their systems and/or
- * data to be ensured and,  more generally, to use and operate it in the
- * same conditions as regards security.
- * <p/>
- * The fact that you are presently reading this means that you have had
- * knowledge of the CeCILL license and that you accept its terms.
- *
- */
-Object.defineProperty(exports, "__esModule", { value: true });
-/**
- * hornet-js-components - Interfaces des composants web de hornet-js
- *
- * @author MEAE - Ministère de l'Europe et des Affaires étrangères
- * @version v5.1.0
- * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
- * @license CECILL-2.1
- */
-var hornet_js_utils_1 = __webpack_require__(0);
-var MenuConstants = __webpack_require__(42);
-var authentication_utils_1 = __webpack_require__(58);
-var _ = __webpack_require__(6);
-var logger = hornet_js_utils_1.Utils.getLogger("hornet-js-component.navigation.utils.navigation-utils");
-/**
- * Apporte des méthodes utilitaires pour gérer les aspects navigation (titre de pages, etc..)
- */
-var NavigationUtils = /** @class */ (function () {
-    function NavigationUtils() {
-    }
-    /**
-     * Retourne toute la configuration Menu
-     * @returns {any}
-     */
-    NavigationUtils.getConfigMenu = function () {
-        return _.cloneDeep(hornet_js_utils_1.Utils.getCls("hornet.menuConfig") || []);
-    };
-    /**
-     *  Construit le tableau de menu en supprimant les liens auquel l'utilisateur n'a pas accès et en ajoutant les
-     * attributs id et level sur chaque item
-     * @param items
-     * @param user
-     * @param isForPlan
-     * @param itemParent
-     * @param level
-     * @returns {IMenuItem[]}
-     */
-    NavigationUtils.getFilteredConfigNavigation = function (items, user, isForPlan, itemParent, level) {
-        var currentItems = [];
-        var idParent = MenuConstants.MENU_ROOT.substring(0, MenuConstants.MENU_ROOT.length - 1);
-        if (itemParent) {
-            idParent = itemParent.id;
-        }
-        if (!level) {
-            level = 0;
-        }
-        for (var i = 0; i < items.length; i++) {
-            var item = items[i];
-            if (!item.rolesAutorises || (item.rolesAutorises && authentication_utils_1.AuthUtils.isAllowed(user, _.isArray(item.rolesAutorises) ? item.rolesAutorises : [item.rolesAutorises]))) {
-                var typeNavigation = (isForPlan) ? "visibleDansPlan" : "visibleDansMenu";
-                if (item[typeNavigation]) {
-                    logger.trace("L'utilisateur a accès au menu:", item.text);
-                    //item.index = indexParent + currentItems.length;
-                    item.id = idParent + MenuConstants.LVL_SEPARATOR + currentItems.length;
-                    item.level = level;
-                    if (item.submenu) {
-                        item.submenu = NavigationUtils.getFilteredConfigNavigation(item.submenu, user, isForPlan, item, level + 1);
-                    }
-                    currentItems.push(item);
-                }
-                else {
-                    logger.trace("L'élément ", item.text, " n'est pas visible dans les menus.");
-                }
-            }
-            else {
-                logger.trace("L'utilisateur n'a pas accès au menu:", item.text);
-            }
-        }
-        return currentItems;
-    };
-    /**
-     * Retourne la clé de la configuration du menu associée à l'url courante
-     * @param navigationData
-     * @param currentUrl
-     * @return {NavigationItem|string}
-     */
-    NavigationUtils.retrievePageTextKey = function (navigationData, currentUrl) {
-        var retour = NavigationUtils.retrievePageTextItem(navigationData, currentUrl);
-        return retour && retour.text;
-    };
-    NavigationUtils.getCurrentItem = function (navigationData, currentUrl) {
-        return this.retrievePageTextItem(navigationData, currentUrl);
-    };
-    /**
-     * Retrouve l'item de la configuration du menu associé à l'url courante
-     * @param navigationData
-     * @param currentUrl
-     * @return {NavigationItem}
-     */
-    NavigationUtils.retrievePageTextItem = function (navigationData, currentUrl) {
-        var currentNavigationItem = undefined;
-        logger.trace("current début:", currentUrl);
-        if (navigationData && navigationData.length > 0) {
-            for (var i = 0; i < navigationData.length; i++) {
-                var navigationItem = navigationData[i];
-                logger.trace(navigationItem);
-                /* test pour voir si l'Url ne se finit pas par un nombre si c'est le cas on supprimer pour avoir le fil d'arianne *
-                 - exemple /partenaire/editer/56  devient --> partenaire/editer
-                 */
-                if (navigationItem.url && currentUrl.match(RegExp(navigationItem.url, "gi"))) {
-                    //On a un bon candidat
-                    logger.trace("Bon candidat");
-                    currentNavigationItem = NavigationUtils.getItemWithLongerUrl(currentNavigationItem, navigationItem);
-                }
-                // Un item peut ne pas avoir d'url mais ses fils oui, il faut donc aller regarder
-                if (navigationItem.submenu) {
-                    logger.trace("parcours des sous menus");
-                    var tempNavigationData = NavigationUtils.retrievePageTextItem(navigationItem.submenu, currentUrl);
-                    currentNavigationItem = NavigationUtils.getItemWithLongerUrl(currentNavigationItem, tempNavigationData);
-                }
-            }
-            logger.trace("current fin :", currentNavigationItem);
-        }
-        return currentNavigationItem;
-    };
-    /**
-     * Retourne l'item ayant l'url la plus longue
-     * @param left
-     * @param right
-     * @return {NavigationItem}
-     */
-    NavigationUtils.getItemWithLongerUrl = function (left, right) {
-        if (!left) {
-            return right;
-        }
-        if (!right) {
-            return left;
-        }
-        if ((left.url || "").length > (right.url || "").length) {
-            return left;
-        }
-        else {
-            return right;
-        }
-    };
-    /**
-     * Change le titre de la page côté client
-     * @param titlePage
-     */
-    NavigationUtils.applyTitlePageOnClient = function (titlePage) {
-        if (!hornet_js_utils_1.Utils.isServer && titlePage) {
-            //côté client
-            document.title = titlePage;
-        }
-    };
-    /**
-     * Permet d'afficher un élément en lui ajoutant la classe MASKED_CLASSNAME (par défaut "masked")
-     * @param element
-     */
-    NavigationUtils.hideElement = function (element) {
-        if (!element.classList.contains(MenuConstants.MASKED_CLASSNAME)) {
-            element.classList.add(MenuConstants.MASKED_CLASSNAME);
-        }
-    };
-    /**
-     * teste si un element est visible dans la navigation
-     * @param element
-     * @returns {boolean}
-     */
-    NavigationUtils.isVisible = function (element) {
-        return !(element.classList.contains(MenuConstants.MASKED_CLASSNAME));
-    };
-    /**
-     * Permet de masquer un élément en lui ôtant la classe MASKED_CLASSNAME (par défaut "masked")
-     * @param element
-     */
-    NavigationUtils.showElement = function (element) {
-        element.classList.remove(MenuConstants.MASKED_CLASSNAME);
-    };
-    /**
-     * Teste si un sous-menu existe
-     * @param element
-     * @returns {boolean}
-     */
-    NavigationUtils.haveSubMenu = function (element) {
-        return element.classList.contains(MenuConstants.HAVING_SUBMENU_CLASSNAME);
-    };
-    /**
-     * Parcourt tout l'arbre d'un lien depuis son parent de plus haut niveau et affiche/masque ses parents
-     * @param element
-     * @param hideElement
-     * @param hideOthersNodesElements
-     */
-    NavigationUtils.rideDownElementAndToggle = function (element, hideElement, hideOthersNodesElements) {
-        var depth = element.id.replace(/[^0-9]/g, "").length;
-        var familyElementId = parseInt(element.id.replace(MenuConstants.MENU_ROOT, "").substr(0, 1));
-        var selector = MenuConstants.MENU_ROOT + familyElementId;
-        /* Fermeture de tous les éléments autres que la branche sur laquelle on est positionné */
-        if (hideOthersNodesElements) {
-            var configMenu = NavigationUtils.getConfigMenu(), user = hornet_js_utils_1.Utils.getCls("hornet.user"), items = NavigationUtils.getFilteredConfigNavigation(configMenu, user), nbMax = items.length + 1; // ajoute 1 pour infosComplémentaires
-            for (var i = 0; i < nbMax; i++) {
-                if (i != familyElementId) {
-                    var elementToHide = document.getElementById(MenuConstants.MENU_ROOT + i);
-                    if (elementToHide) {
-                        NavigationUtils.rideDownElementAndToggle(elementToHide, true);
-                    }
-                }
-            }
-        }
-        var myElement = document.getElementById(selector);
-        if (myElement) {
-            for (var i = 0; i < depth; i++) {
-                if (myElement.classList && myElement.classList.contains(MenuConstants.HAVING_SUBMENU_CLASSNAME)) {
-                    if (myElement.nextSibling && myElement.nextSibling.localName == "li") {
-                        if (hideElement) {
-                            // TODO à corriger : il faut aussi cacher les sous éléments (cf. mantis 58700)
-                            NavigationUtils.hideElement(myElement.nextSibling);
-                        }
-                        else {
-                            NavigationUtils.showElement(myElement.nextSibling);
-                        }
-                    }
-                    myElement = document.getElementById(selector + MenuConstants.LVL_SEPARATOR + "0");
-                }
-            }
-        }
-    };
-    /**
-     * @param item
-     * @returns {boolean} true lorsqu'au moins un sous-menu est visible
-     */
-    NavigationUtils.hasVisibleSubMenu = function (item) {
-        var isVisible = false;
-        if (item.submenu) {
-            isVisible = false;
-            for (var i = 0; i < item.submenu.length && !isVisible; i++) {
-                isVisible = item.submenu[i].visibleDansMenu;
-            }
-        }
-        return isVisible;
-    };
-    /**
-     * Positionne le focus sur un élément selon son ID
-     * @param id identifiant HTML de l'élément
-     */
-    NavigationUtils.setFocus = function (id) {
-        var element = document.getElementById(id);
-        if (element && element.focus) {
-            element.focus();
-            /* On affiche tous les éléments parents de l'élément sélectionné en partant du root */
-            NavigationUtils.rideDownElementAndToggle(element, false, true);
-        }
-    };
-    return NavigationUtils;
-}());
-exports.NavigationUtils = NavigationUtils;
-
-
-
-/***/ }),
 /* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -27732,7 +27732,7 @@ function objectToString(o) {
   return Object.prototype.toString.call(o);
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20).Buffer))
 
 /***/ }),
 /* 28 */
@@ -30069,7 +30069,7 @@ module.exports = checkPropTypes;
 /***/ (function(module, exports, __webpack_require__) {
 
 /* eslint-disable node/no-deprecated-api */
-var buffer = __webpack_require__(19)
+var buffer = __webpack_require__(20)
 var Buffer = buffer.Buffer
 
 // alternative to using Object.keys for old browsers
@@ -31973,7 +31973,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @license CECILL-2.1
  */
 var _ = __webpack_require__(6);
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var logger = common_register_1.Register.getLogger("hornet-js-utils.authentication-utils");
 var AuthUtils = /** @class */ (function () {
     function AuthUtils() {
@@ -32036,7 +32036,7 @@ exports.AuthUtils = AuthUtils;
 // OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE
 // USE OR OTHER DEALINGS IN THE SOFTWARE.
 
-var Buffer = __webpack_require__(19).Buffer;
+var Buffer = __webpack_require__(20).Buffer;
 
 var isBufferEncoding = Buffer.isEncoding
   || function(encoding) {
@@ -33792,7 +33792,7 @@ var tslib_1 = __webpack_require__(1);
  */
 var hornet_js_utils_1 = __webpack_require__(0);
 var React = __webpack_require__(2);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var hornet_component_1 = __webpack_require__(4);
 var menu_constantes_1 = __webpack_require__(42);
 var key_codes_1 = __webpack_require__(9);
@@ -37837,9 +37837,18 @@ var layout_switcher_1 = __webpack_require__(25);
 var change_language_1 = __webpack_require__(144);
 var dropdown_1 = __webpack_require__(39);
 var i18n_service_api_1 = __webpack_require__(133);
+var navigation_utils_1 = __webpack_require__(18);
 var _ = __webpack_require__(6);
 var classNames = __webpack_require__(15);
 var logger = hornet_js_utils_1.Utils.getLogger("applitutoriel.views.layouts.hornet-app");
+var users = { "user": {
+        "name": "user",
+        "roles": [{ "id": 2, "name": "APPLI_TUTO_USER" }]
+    }, "admin": {
+        "name": "admin",
+        "roles": [{ "id": 1, "name": "APPLI_TUTO_ADMIN" }, { "id": 2, "name": "APPLI_TUTO_USER" }]
+    }
+};
 var HornetApp = /** @class */ (function (_super) {
     tslib_1.__extends(HornetApp, _super);
     function HornetApp(props, context) {
@@ -37877,6 +37886,7 @@ var HornetApp = /** @class */ (function (_super) {
      * @inheritDoc
      */
     HornetApp.prototype.render = function () {
+        var _this = this;
         logger.trace("VIEW HornetApp render");
         var title = _.concat(this.i18n("header").logoTitle, this.state.applicationTitle).join(" ");
         var classes = {
@@ -37890,6 +37900,8 @@ var HornetApp = /** @class */ (function (_super) {
             : null;
         var user = React.createElement(user_1.User, null);
         var lang = React.createElement(change_language_1.ChangeLanguage, { handleChangeLanguage: this.handleChangeLanguage, position: dropdown_1.Position.BOTTOMRIGHT });
+        var userMock = hornet_js_utils_1.Utils.config.getOrDefault("fullSpa.enabled", false) && hornet_js_utils_1.Utils.config.getOrDefault("mock.enabled", false) ? React.createElement(dropdown_1.Dropdown, { items: [{ label: "as Admin", action: this.changeUserTo, valueCurrent: "admin", className: "link" },
+                { label: "As User", action: this.changeUserTo, valueCurrent: "user", className: "link" }], title: "mock users", icon: "picto-user", className: "profil-content", id: "dropdown-user-mock" + "-drop", label: "Users", labelClassName: "profil-label", position: dropdown_1.Position.BOTTOMRIGHT }) : null;
         // todo add to banner
         var wrappedUserLang = (React.createElement("div", { className: "userlang fr full-height" },
             user,
@@ -37902,13 +37914,14 @@ var HornetApp = /** @class */ (function (_super) {
                         React.createElement("div", { className: "fl full-height" },
                             React.createElement("a", { className: "header-link", title: this.i18n("application.headerTitleText"), href: this.state.headerTitleUrl }, this.i18n("application.headerTitle"))),
                         React.createElement("div", { className: "fr full-height user", style: { display: "inline-flex" } },
+                            userMock,
                             user,
                             lang,
                             React.createElement(layout_switcher_1.LayoutSwitcher, null)))),
                 React.createElement("div", { id: "banner" },
                     React.createElement("div", { id: "banner-expanded-zone", role: "banner", className: "inside " + this.state.classNameExpanded, style: { maxWidth: this.state.currentWorkingZoneWidth } },
                         React.createElement("div", { className: "fl menu-main-conteneur " },
-                            React.createElement(menu_1.Menu, { showIconInfo: true, workingZoneWidth: this.state.currentWorkingZoneWidth })),
+                            React.createElement(menu_1.Menu, { showIconInfo: true, workingZoneWidth: this.state.currentWorkingZoneWidth, var: function (menu) { return _this.menu = menu; } })),
                         React.createElement("div", { className: "fl mls" },
                             React.createElement("a", { className: "sub-header-link", href: this.genUrl(hornet_js_utils_1.Utils.config.getOrDefault("welcomePage", "/")), title: title, id: "img-logo" },
                                 React.createElement("img", { src: this.state.logoUrl, alt: this.i18n("applicationTitle") }))),
@@ -37948,6 +37961,19 @@ var HornetApp = /** @class */ (function (_super) {
             logger.trace("Retour API PartenaireApi.rechercher :", retourApi.body);
             hornet_js_utils_1.Utils.setCls("hornet.internationalization", retourApi.body);
             window.location.reload();
+        });
+    };
+    /**
+     *
+     * @param value valeur sélectionnée dans la liste des users mocké
+     */
+    HornetApp.prototype.changeUserTo = function (value) {
+        var _this = this;
+        hornet_js_utils_1.Utils.setCls("hornet.user", users[value]);
+        this.navigateTo("accueil", {}, function () {
+            _this.forceUpdate();
+            _this.menu.forceUpdate();
+            _this.menu.setState({ items: _this.menu.props.configMenu ? navigation_utils_1.NavigationUtils.getFilteredConfigNavigation(_.cloneDeep(_this.menu.props.configMenu), _this.user) : navigation_utils_1.NavigationUtils.getFilteredConfigNavigation(navigation_utils_1.NavigationUtils.getConfigMenu(), hornet_js_utils_1.Utils.getCls("hornet.user")) });
         });
     };
     HornetApp.defaultProps = {
@@ -39742,7 +39768,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
  * @license CECILL-2.1
  */
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var moment = __webpack_require__(77);
 var logger = common_register_1.Register.getLogger("hornet-js-utils.date-utils");
 var DateUtils = /** @class */ (function () {
@@ -42173,7 +42199,7 @@ var unsafeHeaders = [
 	'via'
 ]
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19).Buffer, __webpack_require__(8), __webpack_require__(3)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20).Buffer, __webpack_require__(8), __webpack_require__(3)))
 
 /***/ }),
 /* 124 */
@@ -42362,13 +42388,13 @@ IncomingMessage.prototype._onXHRProgress = function () {
 	}
 }
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(19).Buffer, __webpack_require__(8)))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(20).Buffer, __webpack_require__(8)))
 
 /***/ }),
 /* 125 */
 /***/ (function(module, exports, __webpack_require__) {
 
-var Buffer = __webpack_require__(19).Buffer
+var Buffer = __webpack_require__(20).Buffer
 
 module.exports = function (buf) {
 	// If the buffer is backed by a Uint8Array, a faster version will work
@@ -46105,7 +46131,7 @@ var hornet_js_utils_1 = __webpack_require__(0);
 var React = __webpack_require__(2);
 var hornet_component_1 = __webpack_require__(4);
 var bread_crumb_item_1 = __webpack_require__(145);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var router_client_async_elements_1 = __webpack_require__(21);
 var _ = __webpack_require__(6);
 var logger = hornet_js_utils_1.Utils.getLogger("hornet-js-react-components.widget.navigation.breadcrumb");
@@ -46453,7 +46479,7 @@ var tslib_1 = __webpack_require__(1);
 var hornet_js_utils_1 = __webpack_require__(0);
 var React = __webpack_require__(2);
 var menu_constantes_1 = __webpack_require__(42);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var hornet_component_1 = __webpack_require__(4);
 var menu_link_1 = __webpack_require__(67);
 var classNames = __webpack_require__(15);
@@ -47136,7 +47162,7 @@ var tslib_1 = __webpack_require__(1);
  * @license CECILL-2.1
  */
 var React = __webpack_require__(2);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var hornet_component_1 = __webpack_require__(4);
 var menu_navigation_1 = __webpack_require__(148);
 var _ = __webpack_require__(6);
@@ -47432,7 +47458,7 @@ var tslib_1 = __webpack_require__(1);
 var hornet_js_utils_1 = __webpack_require__(0);
 var React = __webpack_require__(2);
 var hornet_component_1 = __webpack_require__(4);
-var navigation_utils_1 = __webpack_require__(20);
+var navigation_utils_1 = __webpack_require__(18);
 var logger = hornet_js_utils_1.Utils.getLogger("hornet-js-react-components.widget.navigation.plan");
 /**
  * Génère le plan de l'application à partir de la configuration de navigation.
@@ -48196,7 +48222,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
  * @license CECILL-2.1
  */
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var logger = common_register_1.Register.getLogger("hornet-js-utils.config-lib");
 /**
  * Classe gérant l'accès à l'objet de configuration
@@ -48456,7 +48482,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
  * @license CECILL-2.1
  */
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var BrowserNameSpace = /** @class */ (function () {
     function BrowserNameSpace() {
         this.content = {};
@@ -51301,7 +51327,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
  * @license CECILL-2.1
  */
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var logger = common_register_1.Register.getLogger("hornet-js-utils.lazy-class-loader");
 var LazyClassLoader = /** @class */ (function () {
     function LazyClassLoader() {

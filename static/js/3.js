@@ -6610,7 +6610,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
  * @link git+https://github.com/diplomatiegouvfr/hornet-js.git
  * @license CECILL-2.1
  */
-var common_register_1 = __webpack_require__(18);
+var common_register_1 = __webpack_require__(19);
 var logger = common_register_1.Register.getLogger("hornet-js-utils.template");
 /**
  * @classdesc classe de templating de string
@@ -16331,7 +16331,7 @@ module.exports = function defFunc(ajv) {
   }
 };
 
-/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(19).Buffer))
+/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(20).Buffer))
 
 /***/ }),
 /* 353 */
