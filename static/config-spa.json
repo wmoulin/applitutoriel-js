@@ -7,7 +7,7 @@
     "staticPath": "/static"
   },
   "mock": {
-    "enabled": true,
+    "enabled": true
   },
   "services": {
     "host": "http://localhost/",
