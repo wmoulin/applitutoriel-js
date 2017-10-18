@@ -37968,7 +37968,7 @@ var HornetApp = /** @class */ (function (_super) {
     HornetApp.prototype.changeUserTo = function (value) {
         var _this = this;
         hornet_js_utils_1.Utils.setCls("hornet.user", users[value]);
-        this.navigateTo("accueil", {}, function () {
+        this.navigateTo("", {}, function () {
             _this.forceUpdate();
             _this.menu.forceUpdate();
             _this.menu.setState({ items: _this.menu.props.configMenu ? navigation_utils_1.NavigationUtils.getFilteredConfigNavigation(_.cloneDeep(_this.menu.props.configMenu), _this.user) : navigation_utils_1.NavigationUtils.getFilteredConfigNavigation(navigation_utils_1.NavigationUtils.getConfigMenu(), hornet_js_utils_1.Utils.getCls("hornet.user")) });
