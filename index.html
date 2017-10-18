@@ -53,17 +53,17 @@
             loadJsonAsynchronously(function (response) {
                 messages = JSON.parse(response);
                 buildConfigurationAndLoadScript();
-            }, '/static/resources/messages-fr-FR.json');
+            }, '/applitutoriel-js/static/resources/messages-fr-FR.json');
 
             loadJsonAsynchronously(function (response) {
                 menuItems = JSON.parse(response);
                 buildConfigurationAndLoadScript();
-            }, '/static/resources/navigation.json');
+            }, '/applitutoriel-js/static/resources/navigation.json');
 
             loadJsonAsynchronously(function (response) {
                 config = JSON.parse(response);
                 buildConfigurationAndLoadScript();
-            }, '/static/config-spa.json');
+            }, '/applitutoriel-js/static/config-spa.json');
 
             function buildConfigurationAndLoadScript() {
                 if (!messages || !menuItems || !config) {
@@ -100,10 +100,10 @@
 
                 var themeUrl = config.themeUrl;
 
-                loadFileInDom("/static/img/logo.png", "icon");
-                loadFileInDom("/static/css/theme.css", "css");
-                loadFileInDom("/static/hornet-themes-intranet/css/theme.css", "css");
-                loadFileInDom("/static/js/client.js", "js", "body");
+                loadFileInDom("/applitutoriel-js/static/img/logo.png", "icon");
+                loadFileInDom("/applitutoriel-js/static/css/theme.css", "css");
+                loadFileInDom("/applitutoriel-js/static/hornet-themes-intranet/css/theme.css", "css");
+                loadFileInDom("/applitutoriel-js/static/js/client.js", "js", "body");
             }
 
         }(this));
