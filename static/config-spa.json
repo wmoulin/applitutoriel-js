@@ -3,7 +3,8 @@
   "fullSpa": {
     "enabled": true,
     "host": "http://localhost/",
-    "name": "applitutoriel-service"
+    "name": "applitutoriel-service",
+    "staticPath": "/applitutoriel-js/static"
   },
   "services": {
     "host": "http://localhost/",
