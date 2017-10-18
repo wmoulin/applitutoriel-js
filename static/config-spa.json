@@ -6,6 +6,9 @@
     "name": "applitutoriel-service",
     "staticPath": "/static"
   },
+  "mock": {
+    "enabled": true,
+  },
   "services": {
     "host": "http://localhost/",
     "name": "applitutoriel-service"
