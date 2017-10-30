@@ -11,15 +11,16 @@ var pro_actions_1 = __webpack_require__(64);
 var abstract_routes_1 = __webpack_require__(129);
 var roles_1 = __webpack_require__(350);
 var pro_lst_page_1 = __webpack_require__(700);
-var secteur_service_page_impl_1 = __webpack_require__(70);
 var produit_service_impl_1 = __webpack_require__(64);
+var adm_fpo_service_page_1 = __webpack_require__(133);
+var injector_1 = __webpack_require__(65);
 var PartenairesRoutes = /** @class */ (function (_super) {
     tslib_1.__extends(PartenairesRoutes, _super);
     function PartenairesRoutes() {
         var _this = _super.call(this) || this;
         /* Routes des pages */
         /* Nouvelle page de recherche avec critères par défaut */
-        _this.addPageRoute("/", function () { return new abstract_routes_1.PageRouteInfos(pro_lst_page_1.ListeProduitsPage, null, secteur_service_page_impl_1.SecteurServiceImpl); }, roles_1.Roles.EVERYONE);
+        _this.addPageRoute("/", function () { return new abstract_routes_1.PageRouteInfos(pro_lst_page_1.ListeProduitsPage, null, injector_1.Injector.getRegistered(adm_fpo_service_page_1.FicheProduitService)); }, roles_1.Roles.EVERYONE);
         /* Routes des pages */
         /* Nouvelle page de recherche avec critères par défaut */
         _this.addDataRoute("/", function () { return new abstract_routes_1.DataRouteInfos(pro_actions_1.ListerProduits, null, produit_service_impl_1.ProduitServiceImpl); }, abstract_routes_1.PUBLIC_ROUTE);
