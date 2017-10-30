@@ -8,7 +8,9 @@
   },
   "mock": {
     "enabled": true,
-    "servicePage": true
+    "servicePage": {
+        "enabled": true
+    }
   },
   "services": {
     "host": "http://localhost/",
