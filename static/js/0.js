@@ -29213,7 +29213,7 @@ var FichePartenairePage = /** @class */ (function (_super) {
                 var products = [];
                 if (result.partenaire) {
                     _this.identiteTab.setPartenaire(result.partenaire);
-                    products = result.partenaire.listeProduit;
+                    products = result.partenaire.listeProduit || [];
                     /* MaJ du titre de la page avec le nom et prénom */
                     _this.fichePartenaireTitre.setState({
                         title: _this.i18n("partenaireFichePage.titre", {
@@ -29249,7 +29249,7 @@ var FichePartenairePage = /** @class */ (function (_super) {
             var products = [];
             if (result.partenaire) {
                 _this.identiteTab.setPartenaire(result.partenaire);
-                products = result.partenaire.listeProduit;
+                products = result.partenaire.listeProduit || [];
                 /* MaJ du titre de la page avec le nom et prénom */
                 _this.fichePartenaireTitre.setState({
                     title: _this.i18n("partenaireFichePage.titre", {
