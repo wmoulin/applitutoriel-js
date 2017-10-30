@@ -1,6 +1,6 @@
 webpackJsonp([6],{
 
-/***/ 262:
+/***/ 263:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9,10 +9,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 var tslib_1 = __webpack_require__(0);
 var ReferentielAction = __webpack_require__(64);
 var abstract_routes_1 = __webpack_require__(128);
-var roles_1 = __webpack_require__(347);
-var urls_1 = __webpack_require__(21);
+var roles_1 = __webpack_require__(349);
+var urls_1 = __webpack_require__(15);
 var ref_pays_service_1 = __webpack_require__(64);
-var injector_1 = __webpack_require__(66);
+var injector_1 = __webpack_require__(65);
 var ReferentielRoutes = /** @class */ (function (_super) {
     tslib_1.__extends(ReferentielRoutes, _super);
     function ReferentielRoutes() {
@@ -31,7 +31,7 @@ exports.default = ReferentielRoutes;
 
 /***/ }),
 
-/***/ 347:
+/***/ 349:
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
