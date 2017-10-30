@@ -1,5 +1,6 @@
 {
   "contextPath": "applitutoriel-js",
+  "welcomePage": "/accueil",
   "fullSpa": {
     "enabled": true,
     "host": "http://localhost/",
